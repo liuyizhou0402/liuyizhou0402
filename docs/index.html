@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历一键建站</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#1d2330;--muted:#6b7280;--line:#e5e7eb;--accent:#4f46e5}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1117;--card:#181b24;--text:#e7e9ee;--muted:#9aa1ad;--line:#2a2f3b;--accent:#818cf8}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+header{padding:28px 16px 8px;text-align:center}
+header h1{margin:0 0 4px;font-size:26px}
+header p{margin:0;color:var(--muted)}
+main{max-width:1280px;margin:0 auto;padding:16px;display:grid;grid-template-columns:420px 1fr;gap:16px}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:24px;text-align:center;cursor:pointer;color:var(--muted)}
+.drop.over{border-color:var(--accent);color:var(--accent)}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input[type=color]{height:38px;padding:2px}
+input,textarea,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sec{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
+.sec-head{display:flex;gap:6px;align-items:center}
+.sec-head input{flex:1}
+button{padding:8px 14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}
+button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+#status{font-size:13px;color:var(--muted);margin-top:8px;min-height:1em}
+iframe{width:100%;height:80vh;border:1px solid var(--line);border-radius:12px;background:#fff}
+</style>
+</head>
+<body>
+<header>
+  <h1>简历一键建站</h1>
+  <p>上传简历(PDF / Word / TXT),自动生成你的专属个人网站。全程在浏览器本地处理,不上传任何数据。</p>
+</header>
+<main>
+  <section class="card">
+    <div class="drop" id="drop">点击或拖拽简历文件到这里<br><small>支持 .pdf .docx .txt</small></div>
+    <input type="file" id="file" accept=".pdf,.docx,.txt" hidden>
+    <div id="status"></div>
+
+    <label>主题风格</label>
+    <select id="theme">
+      <option value="modern">现代简约</option>
+      <option value="dark">深色科技</option>
+      <option value="classic">经典商务</option>
+    </select>
+    <label>主题色</label>
+    <input type="color" id="color" value="#4f46e5">
+
+    <div class="row">
+      <div><label>姓名</label><input id="name"></div>
+      <div><label>职位 / 头衔</label><input id="title"></div>
+    </div>
+    <div class="row">
+      <div><label>邮箱</label><input id="email"></div>
+      <div><label>电话</label><input id="phone"></div>
+    </div>
+    <label>所在地</label><input id="location">
+    <label>链接(每行一个)</label><textarea id="links" style="min-height:60px"></textarea>
+
+    <div id="sections"></div>
+    <div class="actions">
+      <button class="ghost" id="addSec">+ 添加板块</button>
+      <button id="download">下载网站 (index.html)</button>
+    </div>
+  </section>
+  <section><iframe id="preview" title="网站预览"></iframe></section>
+</main>
+
+<script>
+if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const $=id=>document.getElementById(id);
+const FIELDS=['name','title','email','phone','location','links','theme','color'];
+let sections=[
+  {title:'个人简介',body:''},{title:'工作经历',body:''},{title:'教育背景',body:''},{title:'技能',body:''}
+];
+
+const HEADINGS=[
+  ['个人简介',/^(个人简介|自我评价|个人总结|summary|profile|about( me)?|objective)$/i],
+  ['工作经历',/^(工作经历|工作经验|实习经历|work experience|experience|employment( history)?|professional experience)$/i],
+  ['项目经历',/^(项目经历|项目经验|projects?|selected projects)$/i],
+  ['教育背景',/^(教育背景|教育经历|education)$/i],
+  ['技能',/^(专业技能|技能|技能特长|skills|technical skills|core skills)$/i],
+  ['证书与荣誉',/^(证书|荣誉|获奖情况|证书与荣誉|certifications?|awards?|honou?rs)$/i],
+  ['语言',/^(语言能力|语言|languages?)$/i],
+];
+
+async function extractText(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='txt') return await file.text();
+  if(ext==='docx'){if(!window.mammoth) throw new Error('Word 解析库加载失败,请检查网络后刷新');const r=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});return r.value;}
+  if(ext==='pdf'){
+    if(!window.pdfjsLib) throw new Error('PDF 解析库加载失败,请检查网络后刷新');
+    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+    const out=[];
+    for(let p=1;p<=pdf.numPages;p++){
+      const items=(await (await pdf.getPage(p)).getTextContent()).items;
+      const lines=[];
+      for(const it of items){
+        const y=Math.round(it.transform[5]);
+        let l=lines.find(l=>Math.abs(l.y-y)<3);
+        if(!l){l={y,parts:[]};lines.push(l);}
+        l.parts.push({x:it.transform[4],s:it.str});
+      }
+      lines.sort((a,b)=>b.y-a.y);
+      for(const l of lines) out.push(l.parts.sort((a,b)=>a.x-b.x).map(p=>p.s).join(' ').replace(/\s+/g,' ').trim());
+    }
+    return out.join('\n');
+  }
+  throw new Error('不支持的文件格式');
+}
+
+function parse(text){
+  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const d={name:'',title:'',email:'',phone:'',location:'',links:''};
+  const email=text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/); if(email)d.email=email[0];
+  const phone=text.match(/(\+?\d[\d\s-]{7,}\d)/); if(phone)d.phone=phone[0].trim();
+  const urls=[...new Set(text.match(/(https?:\/\/[^\s,;]+|(?:www\.)?(?:linkedin\.com|github\.com)\/[^\s,;]+)/gi)||[])];
+  d.links=urls.join('\n');
+  const secs=[];let cur=null;const head=[];
+  for(const line of lines){
+    const clean=line.replace(/[:：\s]+$/,'');
+    const h=HEADINGS.find(([,re])=>re.test(clean));
+    if(h){cur={title:h[0],body:[]};secs.push(cur);continue;}
+    if(cur) cur.body.push(line); else head.push(line);
+  }
+  const isContact=l=>/@|https?:|www\.|\d{7,}/.test(l.replace(/[\s-]/g,''));
+  const headClean=head.filter(l=>!isContact(l));
+  d.name=headClean[0]||'';
+  if(headClean[1]&&headClean[1].length<60) d.title=headClean[1];
+  const intro=headClean.slice(2).join('\n');
+  sections=secs.length?secs.map(s=>({title:s.title,body:s.body.join('\n')})):[{title:'简历内容',body:head.slice(1).join('\n')}];
+  if(intro&&!sections.some(s=>s.title==='个人简介')) sections.unshift({title:'个人简介',body:intro});
+  return d;
+}
+
+function renderForm(){
+  const box=$('sections');box.innerHTML='';
+  sections.forEach((s,i)=>{
+    const div=document.createElement('div');div.className='sec';
+    div.innerHTML=`<div class="sec-head"><input data-i="${i}" data-k="title"><button class="ghost" data-del="${i}" title="删除">✕</button></div><textarea data-i="${i}" data-k="body" placeholder="每行一条;以 - 或 • 开头显示为列表"></textarea>`;
+    div.querySelector('input').value=s.title;div.querySelector('textarea').value=s.body;
+    box.appendChild(div);
+  });
+}
+$('sections').addEventListener('input',e=>{const t=e.target;if(t.dataset.k){sections[t.dataset.i][t.dataset.k]=t.value;update();}});
+$('sections').addEventListener('click',e=>{const i=e.target.dataset.del;if(i!==undefined){sections.splice(+i,1);renderForm();update();}});
+$('addSec').onclick=()=>{sections.push({title:'新板块',body:''});renderForm();update();};
+FIELDS.forEach(f=>$(f).addEventListener('input',update));
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function bodyHTML(text){
+  const lines=text.split('\n').map(s=>s.trim()).filter(Boolean);let html='',inList=false;
+  for(const l of lines){
+    const m=l.match(/^[-•·●▪*]\s*(.*)/);
+    if(m){if(!inList){html+='<ul>';inList=true;}html+=`<li>${esc(m[1])}</li>`;}
+    else{if(inList){html+='</ul>';inList=false;}html+=`<p>${esc(l)}</p>`;}
+  }
+  return html+(inList?'</ul>':'');
+}
+const THEMES={
+  modern:{bg:'#f7f8fc',card:'#ffffff',text:'#1f2937',muted:'#6b7280',font:'system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif'},
+  dark:{bg:'#0d1017',card:'#161a23',text:'#e6e8ee',muted:'#9aa1ad',font:'"Inter",system-ui,"PingFang SC",sans-serif'},
+  classic:{bg:'#faf8f3',card:'#ffffff',text:'#2b2b2b',muted:'#6d6a63',font:'Georgia,"Times New Roman","Songti SC",serif'},
+};
+function generate(){
+  const v=Object.fromEntries(FIELDS.map(f=>[f,$(f).value.trim()]));
+  const t=THEMES[v.theme],c=/^#[0-9a-f]{6}$/i.test(v.color)?v.color:'#4f46e5';
+  const contacts=[];
+  if(v.email)contacts.push(`<a href="mailto:${esc(v.email)}">${esc(v.email)}</a>`);
+  if(v.phone)contacts.push(`<span>${esc(v.phone)}</span>`);
+  if(v.location)contacts.push(`<span>${esc(v.location)}</span>`);
+  v.links.split('\n').map(s=>s.trim()).filter(Boolean).forEach(u=>{
+    const href=/^https?:\/\//i.test(u)?u:'https://'+u;
+    contacts.push(`<a href="${esc(href)}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\/(www\.)?/i,''))}</a>`);
+  });
+  const secs=sections.filter(s=>s.body.trim()).map(s=>`<section><h2>${esc(s.title)}</h2>${bodyHTML(s.body)}</section>`).join('');
+  const name=v.name||'你的名字';
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(name)}${v.title?' · '+esc(v.title):''}</title><style>
+*{box-sizing:border-box}body{margin:0;background:${t.bg};color:${t.text};font:16px/1.7 ${t.font}}
+.hero{padding:72px 16px 56px;text-align:center;background:linear-gradient(135deg,${c},${c}bb);color:#fff}
+.hero h1{margin:0;font-size:clamp(32px,6vw,52px);letter-spacing:.5px}.hero .role{margin:8px 0 20px;font-size:20px;opacity:.9}
+.contacts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.contacts a,.contacts span{color:#fff;text-decoration:none;padding:4px 12px;border:1px solid rgba(255,255,255,.45);border-radius:999px;font-size:14px}
+.contacts a:hover{background:rgba(255,255,255,.15)}
+main{max-width:860px;margin:-28px auto 48px;padding:0 16px}
+section{background:${t.card};border-radius:14px;padding:24px 28px;margin-bottom:16px;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+h2{margin:0 0 12px;font-size:20px;color:${c};border-left:4px solid ${c};padding-left:10px}
+p{margin:4px 0}ul{margin:4px 0;padding-left:22px}li{margin:2px 0}
+footer{text-align:center;color:${t.muted};font-size:13px;padding-bottom:32px}
+@media(max-width:600px){section{padding:18px}}
+</style></head><body><div class="hero"><h1>${esc(name)}</h1>${v.title?`<div class="role">${esc(v.title)}</div>`:''}<div class="contacts">${contacts.join('')}</div></div><main>${secs}</main><footer>© ${new Date().getFullYear()} ${esc(name)}</footer></body></html>`;
+}
+let timer;
+function update(){clearTimeout(timer);timer=setTimeout(()=>{$('preview').srcdoc=generate();},150);}
+
+async function handle(file){
+  if(!file)return;
+  $('status').textContent='正在解析 '+file.name+' …';
+  try{
+    const d=parse(await extractText(file));
+    for(const k in d) $(k).value=d[k];
+    renderForm();update();
+    $('status').textContent='解析完成,请检查并修改下方内容。';
+  }catch(e){$('status').textContent='解析失败:'+e.message;}
+}
+const drop=$('drop');
+drop.onclick=()=>$('file').click();
+$('file').onchange=e=>handle(e.target.files[0]);
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('over');};
+drop.ondragleave=()=>drop.classList.remove('over');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');handle(e.dataTransfer.files[0]);};
+$('download').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([generate()],{type:'text/html'}));
+  a.download='index.html';a.click();URL.revokeObjectURL(a.href);
+};
+renderForm();update();
+</script>
+</body>
+</html>
