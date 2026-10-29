@@ -1,0 +1,743 @@
+<title>Botany 路考备考</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one narrow reading column, like a test score sheet on a clipboard; road-sign red and school-zone yellow as the only accents */
+:root{
+  --bg:#eef0f2; --surface:#ffffff; --ink:#15181c; --muted:#59616b; --line:#d3d8dd;
+  --red:#c8102e; --yellow:#f2c200; --green:#1d7a4b; --wrong:#b3261e;
+  --tint-red:#fbe9eb; --tint-green:#e5f3ec; --tint-yellow:#fff6d1;
+  --sign-face:#ffffff; --sign-ink:#111111; --on-yellow:#111111;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111316; --surface:#1a1d21; --ink:#eceef1; --muted:#9ba3ad; --line:#2d3238;
+  --red:#ff5a6a; --yellow:#e9b800; --green:#46c486; --wrong:#ff7a70;
+  --tint-red:#3a1a1f; --tint-green:#17301f; --tint-yellow:#3a3110; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111316; --surface:#1a1d21; --ink:#eceef1; --muted:#9ba3ad; --line:#2d3238;
+  --red:#ff5a6a; --yellow:#e9b800; --green:#46c486; --wrong:#ff7a70;
+  --tint-red:#3a1a1f; --tint-green:#17301f; --tint-yellow:#3a3110; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65}
+.wrap{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1.05;letter-spacing:.01em}
+h2{font-family:var(--body);font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:10px}
+h2 .tag{font-family:var(--display);font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+p{margin:0}
+a{color:var(--red)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.eyebrow{font-family:var(--display);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.85rem;color:var(--red)}
+.hero{display:flex;flex-direction:column;gap:10px}
+.hero .when{color:var(--muted)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.key{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.key b{font-family:var(--display);font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.key span{font-size:.78rem;color:var(--muted);line-height:1.4}
+.key.warn{background:var(--yellow);border-color:var(--yellow);color:var(--on-yellow)}
+.key.warn span{color:var(--on-yellow)}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+nav a{font-size:.88rem;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px}
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:12px}
+.note{font-size:.88rem;color:var(--muted)}
+.links{display:flex;flex-direction:column;gap:8px}
+.links a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.links a b{color:var(--red)}
+.links a span{display:block;font-size:.82rem;color:var(--muted)}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{display:grid;grid-template-columns:64px 1fr;gap:12px;position:relative;padding-bottom:16px}
+.tl li::before{content:"";position:absolute;left:31px;top:26px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl .t{font-family:var(--display);font-weight:700;font-size:1.05rem;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:4px;height:26px;line-height:24px;position:relative;z-index:1;font-variant-numeric:tabular-nums}
+.tl .t.hot{background:var(--red);border-color:var(--red);color:#fff}
+.tl .c{min-width:0;display:flex;flex-direction:column;gap:4px}
+.tl .c h3{font-size:1rem}
+section > h3{font-size:1.02rem;margin-top:6px}
+.tl ul{margin:0;padding-left:1.1em}
+.tl li li{display:list-item;padding:0}
+.tl li li::before{display:none}
+
+/* tables */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+th{font-weight:700;font-size:.8rem;color:var(--muted);letter-spacing:.04em}
+.pill{display:inline-block;font-family:var(--display);font-weight:700;letter-spacing:.06em;font-size:.82rem;padding:1px 8px;border-radius:3px;white-space:nowrap}
+.pill.on{background:var(--tint-green);color:var(--green)}
+.pill.off{background:var(--tint-red);color:var(--red)}
+.pill.keep{background:var(--tint-yellow);color:var(--ink)}
+
+/* speed signs */
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.sp{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.disc{width:58px;height:58px;border-radius:50%;background:var(--sign-face);border:7px solid #c8102e;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.45rem;color:var(--sign-ink);font-variant-numeric:tabular-nums}
+.disc.school{border-color:#c8102e;box-shadow:0 0 0 4px var(--yellow)}
+.sp b{font-size:.92rem}
+.sp span{font-size:.82rem;color:var(--muted);line-height:1.5}
+.sp .aim{font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--ink)}
+.callout{background:var(--yellow);color:var(--on-yellow);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.callout b{font-size:1rem}
+.rules{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);font-family:var(--display);font-weight:700;letter-spacing:.06em;font-size:.95rem}
+.zones{display:flex;gap:3px;flex-wrap:wrap;padding:10px 14px 0}
+.zones i{width:16px;height:6px;border-radius:2px;background:var(--line)}
+.zones i.ok{background:var(--green)}
+.zones i.bad{background:var(--wrong)}
+.zones i.cur{background:var(--ink)}
+.qbody{padding:14px;display:flex;flex-direction:column;gap:12px}
+.scene{font-size:1rem}
+.scene .z{font-family:var(--display);font-weight:700;color:var(--red);letter-spacing:.06em;display:block;font-size:.85rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:inherit;font-size:.93rem;text-align:left;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--green);background:var(--tint-green)}
+.opt.wrongpick{border-color:var(--wrong);background:var(--tint-red)}
+.explain{border-left:3px solid var(--green);padding:4px 0 4px 12px;font-size:.92rem;display:flex;flex-direction:column;gap:4px}
+.explain.bad{border-left-color:var(--wrong)}
+.explain .verdict{font-weight:700}
+.explain .item{font-size:.8rem;color:var(--muted)}
+.qfoot{display:flex;justify-content:flex-end;gap:8px;padding:0 14px 14px}
+.btn{font:inherit;font-weight:700;font-size:.92rem;border-radius:6px;padding:9px 16px;cursor:pointer;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.result{display:flex;flex-direction:column;gap:12px}
+.score{font-family:var(--display);font-weight:800;font-size:3rem;line-height:1;font-variant-numeric:tabular-nums}
+.review{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:.92rem}
+.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.check label{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer}
+.check input{margin-top:5px;accent-color:var(--red);width:16px;height:16px;flex:none}
+footer{font-size:.8rem;color:var(--muted)}
+
+/* mock score sheet */
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.sheet-block{padding:14px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.sheet-block:last-child{border-bottom:none}
+.sheet-block h3{font-size:.98rem;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sheet-block h3 small{font-weight:400;color:var(--muted);font-size:.8rem}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fields label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted);min-width:0}
+.fields input,.sheet textarea{font:inherit;font-size:.93rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+.sheet textarea{min-height:70px;resize:vertical}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.summary div{background:var(--bg);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.summary b{font-family:var(--display);font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+.summary span{font-size:.72rem;color:var(--muted);line-height:1.35}
+.verdict-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.88rem}
+.vpill{font-family:var(--display);font-weight:800;letter-spacing:.08em;font-size:1.1rem;padding:2px 12px;border-radius:4px}
+.vpill.pass{background:var(--green);color:#fff}
+.vpill.fail{background:var(--wrong);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--muted)}
+.legend b{color:var(--ink);font-family:var(--display)}
+.zwrap{overflow-x:auto;margin:0 -14px;padding:0 14px}
+.ztable{border-collapse:collapse;width:100%;min-width:330px}
+.ztable th{font-family:var(--display);font-size:.85rem;color:var(--muted);text-align:center;padding:4px 2px;border-bottom:1px solid var(--line)}
+.ztable td{text-align:center;padding:4px 2px;border-bottom:1px solid var(--line)}
+.ztable td.zn{font-family:var(--display);font-weight:700;font-size:1rem;color:var(--muted);width:30px;font-variant-numeric:tabular-nums}
+.ztable th.sep,.ztable td.sep{border-left:1px dashed var(--line)}
+.chip{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--muted);font-family:var(--display);font-weight:700;font-size:.95rem;cursor:pointer;padding:0;display:inline-grid;place-items:center}
+.chip.miss{border:2.5px solid var(--wrong);color:var(--wrong);background:var(--tint-red)}
+.chip.haz{background:var(--yellow);border-color:var(--yellow);color:var(--on-yellow)}
+.chip.flag{background:var(--wrong);border-color:var(--wrong);color:#fff}
+.chip:disabled{opacity:.25;cursor:default}
+.frow{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:.86rem}
+.frow:last-child{border-bottom:none}
+.frow .n{font-family:var(--display);font-weight:700;color:var(--muted);text-align:right}
+.frow .t{min-width:0;line-height:1.4}
+.frow .t small{display:block;color:var(--muted);font-size:.74rem}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:30px;height:30px;border-radius:6px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.05rem;cursor:pointer;line-height:1}
+.stepper output{min-width:18px;text-align:center;font-family:var(--display);font-weight:700;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.frow.hit{background:var(--tint-red)}
+.toggle-row{display:flex;align-items:center;gap:10px;font-size:.9rem}
+.toggle-row input{width:18px;height:18px;accent-color:var(--wrong)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;align-items:center}
+.status{font-size:.82rem;color:var(--muted);margin-right:auto}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.hist li{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:var(--bg);border-radius:6px;padding:10px 12px}
+.hist .meta{min-width:0;font-size:.86rem;line-height:1.45}
+.hist .meta b{font-family:var(--display);font-size:1.15rem;font-variant-numeric:tabular-nums}
+.hist .meta small{display:block;color:var(--muted)}
+.hist .btns{display:flex;gap:6px}
+.btn.sm{padding:6px 10px;font-size:.82rem}
+.btn.danger{background:var(--wrong);border-color:var(--wrong);color:#fff}
+@media (max-width:420px){.summary{grid-template-columns:1fr 1fr}.fields{grid-template-columns:1fr}}
+@media (max-width:420px){.keys{grid-template-columns:1fr 1fr 1fr}.key b{font-size:1.35rem}h1{font-size:2.1rem}}
+@media (prefers-reduced-motion:no-preference){.opt,.btn{transition:border-color .15s,background .15s}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">NSW Driving Test · Class C</div>
+  <h1>Botany 路考备考</h1>
+  <p class="when">周一 10 月 26 日 14:00 · Botany Service Centre</p>
+  <div class="keys">
+    <div class="key"><b>≥90%</b><span>及格线，且 0 个 fail item</span></div>
+    <div class="key warn"><b>14:30</b><span>学校区域 40 开始生效（周一是上学日）</span></div>
+    <div class="key"><b>7 天</b><span>挂了之后，最少隔 7 天再考</span></div>
+  </div>
+</header>
+
+<nav aria-label="页面目录">
+  <a href="#docs">官方资料</a><a href="#flow">完整流程</a><a href="#engine">启动 / 熄火</a><a href="#headcheck">Head check</a><a href="#scoring">扣分与 fail</a><a href="#speed">限速</a><a href="#mock">模拟训练</a><a href="#rightturn">右转专项</a><a href="#sheet">模拟打分表</a><a href="#list">出门清单</a>
+</nav>
+
+<section id="docs">
+  <h2>官方资料</h2>
+  <div class="links">
+    <a href="https://www.nsw.gov.au/sites/default/files/2021-08/guide-to-driving-test.pdf" target="_blank" rel="noopener"><b>A Guide to the Driving Test（PDF，2026-05 版）</b><span>Transport for NSW 官方考试指南。重点看第 31–37 页「Why you might fail」</span></a>
+    <a href="https://www.service.nsw.gov.au/visual-story/going-for-your-driving-test" target="_blank" rel="noopener"><b>Going for your Driving Test</b><span>Service NSW 的图文流程，从签到到拿驾照</span></a>
+    <a href="https://www.transport.nsw.gov.au/roadsafety/community/schools/school-zones" target="_blank" rel="noopener"><b>School zones</b><span>Transport for NSW：学校区域时间和规则</span></a>
+  </div>
+</section>
+
+<section id="flow">
+  <h2>完整流程 <span class="tag">Start → Result</span></h2>
+  <ol class="tl">
+    <li><div class="t">前晚</div><div class="c"><h3>检查车和材料</h3>
+      <ul><li>转向灯（含侧面）、刹车灯（含高位）、轮胎、挡风玻璃、后视镜、安全带、头枕都正常</li><li>拆掉或拔掉行车记录仪：车上有能录下考试的设备，考试会被取消</li><li>车里松散的东西收好，钱和贵重物品放到看不见的地方</li></ul></div></li>
+    <li><div class="t">13:40</div><div class="c"><h3>到达并停车</h3>
+      <ul><li>官方要求至少提前 15 分钟到</li><li>停进 driving test 专用车位，熄火</li><li>必须带一个持正式驾照的人：挂了你不能自己开走</li></ul></div></li>
+    <li><div class="t">签到</div><div class="c"><h3>到前台 / concierge 报到</h3>
+      <ul><li>交材料（见页底清单），等考官叫号</li><li>在 score sheet 上签字前可以问任何问题。<b>签字那一刻考试就开始了</b>，从这时起不能接受任何人的提示</li></ul></div></li>
+    <li><div class="t">车边</div><div class="c"><h3>考官和你一起走到车旁</h3>
+      <ul><li>考官检查车辆是否适合考试；车不合格且当场修不好，考试取消、费用不退</li><li>车里只能有你和考官（偶尔有一位监考员坐后排）</li></ul></div></li>
+    <li><div class="t">上车</div><div class="c"><h3>调整好再启动</h3>
+      <ul><li>座椅、头枕、后视镜、方向盘；安全带“低、平、紧”</li><li>确认 AEB 等安全系统开着；自动泊车辅助（park assist）关掉</li><li>踩刹车启动，看仪表盘没有警告灯</li></ul></div></li>
+    <li><div class="t hot">考试</div><div class="c"><h3>固定路线，25 个 zone</h3>
+      <ul><li>考官指路并逐个 zone 打分，看 5 项：速度管理 S、道路位置 P、决策 D、对危险的反应 H/R、车辆控制 C</li><li>途中会抽几个动作（manoeuvres）：kerbside stop（靠边停车，要熄火）、hill start（坡起）、3-point turn（三点掉头）、parking（reverse parallel 侧方，或 90° / 45° angle park，看当地有什么）</li><li>犯了 fail item 一般会让你开完；只有危险驾驶或不配合才会当场中止</li><li>考官不会教你怎么开，也不会提示</li></ul></div></li>
+    <li><div class="t">返回</div><div class="c"><h3>停回考试车位</h3>
+      <ul><li>拉手刹、挂 P，熄火</li><li>回大厅等考官算分</li></ul></div></li>
+    <li><div class="t">结果</div><div class="c"><h3>叫号拿结果</h3>
+      <ul><li><b>过了</b>：付 P1 驾照费、拍照，当场拿到驾照</li><li><b>没过</b>：拿到 score sheet 和大致反馈；可以当场或之后在网上重新约，考试日期至少隔 7 天</li><li>不管结果如何，回程建议让陪同的人开</li></ul></div></li>
+  </ol>
+</section>
+
+<section id="engine">
+  <h2>什么时候启动、熄火</h2>
+  <p class="note">要熄火的有三处：<b>一开始停车、kerbside stop、最后回到考试车位</b>。正常行驶中停下（红灯、Stop、堵车）都不熄火。官方指南没有逐条写熄火步骤，考官和你教练的指令优先。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>时刻</th><th>发动机</th><th>要做的事</th></tr></thead>
+    <tbody>
+      <tr><td>到 service centre 停好车</td><td><span class="pill off">熄火</span></td><td>拉手刹（handbrake / park brake）、挂 P，然后进去签到</td></tr>
+      <tr><td>考官在车外检查（vehicle check）</td><td><span class="pill keep">听指令</span></td><td>让你打灯、踩刹车、启动，照做即可；考官上车前不要挂挡</td></tr>
+      <tr><td>出发前（moving off）</td><td><span class="pill on">启动</span></td><td>手刹拉着、挂 P，踩住刹车再启动；看仪表盘有没有警告灯</td></tr>
+      <tr><td>红灯、Stop、让行、堵车</td><td><span class="pill on">不熄火</span></td><td>和前车保持 1–2 个车长</td></tr>
+      <tr><td><b>Kerbside stop</b>（靠边停车）</td><td><span class="pill off">熄火</span></td><td>停稳 → 关转向灯 → 拉手刹 → 挂 P（手动挡按教练教的挂空挡或 1 挡）→ 熄火 → 手脚离开踏板和方向盘。像要下车一样把车 secure 好，等考官让你重新启动</td></tr>
+      <tr><td><b>Hill start</b>（kerbside stop 之后重新起步）</td><td><span class="pill on">启动</span></td><td>踩刹车启动，看仪表盘 → 打右灯至少 5 秒 → 看后视镜 → 回头看右侧盲区（head check）→ 起步不溜车超过 500mm</td></tr>
+      <tr><td>Reverse parallel park / angle park / 3-point turn 做完</td><td><span class="pill keep">听指令</span></td><td>停稳拉手刹、挂 P，等考官下一步；考官让熄火就熄火</td></tr>
+      <tr><td>回到考试车位</td><td><span class="pill off">熄火</span></td><td>手刹、P 挡、熄火，等考官说结束再下车</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="headcheck">
+  <h2>Head check 全清单 <span class="tag">Blind spot</span></h2>
+  <p class="note">Head check 是转头越过肩膀看盲区（blind spot），只看后视镜不算。官方写的是 frequently / repeatedly 漏看就算 fail item 19，每漏一次在 score sheet 上记一个 H。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>情况</th><th>英文</th><th>看哪边 / 看什么</th></tr></thead>
+    <tbody>
+      <tr><td>离开路边、离开停车位</td><td>Leaving the kerb / a parked position</td><td>右肩，看后方来车（同时打灯至少 5 秒）</td></tr>
+      <tr><td>靠边停车、开去路边</td><td>Returning to the kerb / pulling over</td><td>左肩，看自行车、摩托</td></tr>
+      <tr><td>变道</td><td>Changing lanes</td><td>要去的那一侧</td></tr>
+      <tr><td>并线、分流</td><td>Merging / diverging</td><td>要去的那一侧</td></tr>
+      <tr><td>汇入车流</td><td>Joining the traffic stream</td><td>来车方向</td></tr>
+      <tr><td>左转</td><td>Turning left</td><td>左肩，看身边的行人、自行车、摩托</td></tr>
+      <tr><td>右转、转进小街或车道口</td><td>Turning right / into a street or driveway</td><td>右肩，看有没有车正在超你</td></tr>
+      <tr><td>环岛出口跨车道（多车道环岛离开内侧车道）</td><td>Crossing lanes when exiting a roundabout</td><td>左肩</td></tr>
+      <tr><td>倒车（任何时候）</td><td>Reversing</td><td>转身从后窗看，再配合后视镜；有倒车影像也要看</td></tr>
+      <tr><td>停车项目开始前，开去路边</td><td>Moving to the kerb to start a manoeuvre</td><td>左肩</td></tr>
+      <tr><td>倒车时车头会甩进旁边车道</td><td>Front of the car swings into the lane while reversing</td><td>转向前看车头那一侧</td></tr>
+      <tr><td>停车项目做完，重新上路</td><td>Leaving the kerb to rejoin traffic</td><td>右肩</td></tr>
+      <tr><td>三点掉头每一次移动前</td><td>3-point turn: before each movement</td><td>左右都看，倒车那一下转身看后窗</td></tr>
+      <tr><td>红绿灯、铁路道口停下后再起步</td><td>Moving off at traffic lights / level crossings</td><td>转头看左右，确认没人闯红灯、没有行人</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="scoring">
+  <h2>扣分与 fail <span class="tag">Score sheet</span></h2>
+  <p class="note">分三档：<b>扣分</b>（各 zone 里画圈，总分低于 90% 才不过）→ <b>Fail item</b>（一个就不过，但会让你开完）→ <b>Immediate fail / Termination</b>（当场中止）。</p>
+
+  <h3>一、扣分点（每个 zone 按 S P D H/R C 打分，没做到就画圈）</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>项目</th><th>常见扣分情况</th></tr></thead>
+    <tbody>
+      <tr><td><b>S</b> Speed management<br>速度管理</td><td>跟车不足 3 秒；停车时离前车不到 1–2 个车长；视线受限（弯道、坡顶、看不到前方 5 秒）时没减速；两侧空间窄时没减速；过减速带太快有明显颠簸；路况允许却开得慢、拖住车流</td></tr>
+      <tr><td><b>P</b> Road positioning<br>道路位置</td><td>离路边停着的车或对向车不到 1 米（buffering）；坡顶、弯道没往左靠；在别的车盲区里并行；路口进出位置不对；停车项目角度不正、离路缘太远、离其他车不在 1–2 米</td></tr>
+      <tr><td><b>D</b> Decision making<br>决策</td><td>选的空档让别的车要减速或避让；穿过车流没留 3 秒；该走的时候犹豫、明明安全还在路口停着不走；漏看（observation error，记 H）</td></tr>
+      <tr><td><b>H / R</b> Hazards / Responding<br>危险反应</td><td>看到可能闯进你路线的东西（要出来的车、开门的车、行人）没有松油、没把脚放到刹车上（cover the brake）、没减速或没让开距离</td></tr>
+      <tr><td><b>C</b> Vehicle control<br>车辆控制</td><td>A 坐姿、安全带；B 刹车急、油门猛、轰油（over-revving）、换挡不顺；C 方向盘单手、手放内侧、打方向不稳；D 不会用雨刷、除雾等；E 不节能驾驶；S 转向灯错误（signal error）</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">打灯错误（S）和漏看（H）每次都会记下来，累计多了就升级成 fail item 12 / 19。官方只写 frequently / repeatedly，没写具体次数；驾校普遍说法是超过 2 次就会 fail，所以按 0 次准备。</p>
+
+  <h3>二、Fail item（一个就不过，考试继续）</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>英文</th><th>举例</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Disobeying traffic signs, signals or road markings</td><td>闯红灯；能停时黄灯不停；Stop 线停的位置不对（离线超过 1 米或压线）；无故压实线、边线；不按车道箭头；违反单行、禁止进入、禁止掉头、Keep Clear</td></tr>
+      <tr><td>2</td><td>Failing to give way</td><td>路口不让有优先权的车；斑马线、路口不让行人；汇入、并线、变道不让</td></tr>
+      <tr><td>3</td><td>Colliding with a vehicle, pedestrian or object</td><td>开上路缘、开上环岛中心、骑在减速圆顶上。轮胎只是碰到路缘侧面不算</td></tr>
+      <tr><td>4</td><td>Illegal act or manoeuvre</td><td>无标线道路上无故开到对向；从错误车道转弯；转弯出到不允许的车道；让行人时停在斑马线或停止线上；不在左车道行驶；违规掉头；环岛走错车道；在斑马线超过停着的车；不安全时进铁路道口；不系安全带；用手机</td></tr>
+      <tr><td>5</td><td>Exceeding the speed limit</td><td>任何时候超速，包括学校区域、经过闪灯巴士、经过闪灯紧急车辆（限速 ≤80 的路）、学员限速、施工限速</td></tr>
+      <tr><td>6</td><td>Testing officer intervention</td><td>考官口头提醒、动手帮你、踩教练车副刹</td></tr>
+      <tr><td>7</td><td>Causing a dangerous situation</td><td>不安全超车；不必要的让行（给本该让你的车让路，打乱车流）</td></tr>
+      <tr><td>8</td><td>Failing to maintain proper control</td><td>起步溜车超过 500mm；打滑、轮胎空转；踩着离合滑行或空挡滑行；方向盘控制不住</td></tr>
+      <tr><td>9</td><td>Failing to exercise due care</td><td>出现需要反应的情况时你没准备好</td></tr>
+      <tr><td>10</td><td>Failing to give way to an emergency vehicle</td><td>不给警车、救护车、消防车让路</td></tr>
+      <tr><td>11</td><td>Disobeying a person controlling traffic</td><td>不听警察、施工举牌人员、引导车的指挥</td></tr>
+      <tr><td>12</td><td>Frequently not signalling</td><td>转弯、离开路边或停车位（至少 5 秒）、变道、分流、靠边、出环岛时反复不打灯</td></tr>
+      <tr><td>13</td><td>Refusing to attempt any part of the test</td><td>拒绝做某个项目</td></tr>
+      <tr><td>14</td><td>Repeated or deliberate failure to follow directions</td><td>反复或故意不按考官指令走</td></tr>
+      <tr><td>15</td><td>Unreasonably obstructing others</td><td>前方没空间还开进路口、堵在路口里；路况不需要却明显低于限速</td></tr>
+      <tr><td>16</td><td>Receiving external advice</td><td>签字之后到上车之前、考试中，有人给你提示</td></tr>
+      <tr><td>17</td><td>Not parking to the required standard</td><td>最终离路缘超过 1 米或挡住交通；轮子压停车线；侧方停车倒出前车超过 7 米</td></tr>
+      <tr><td>18</td><td>Failing to maintain a safe following distance</td><td>跟车太近（少于 3 秒）</td></tr>
+      <tr><td>19</td><td>Frequently not performing observation checks</td><td>反复漏 head check（见上面清单）</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>三、Immediate fail（当场中止，考官可能把你开回去）</h3>
+  <ul class="rules">
+    <li>做了不安全或危险的事，对公众有明显危险，例如闯红灯时差点撞到人、逼得别的车急刹</li>
+    <li>不配合考官，没法正常考</li>
+  </ul>
+
+  <h3>四、Termination（和驾驶技术无关的取消，费用一般不退）</h3>
+  <ul class="rules">
+    <li>车不合格：转向灯（含侧面）或刹车灯不亮、轮胎不合格、没注册、挡风玻璃裂到挡视线、后视镜坏、没头枕、副驾安全带不能用、副驾门把手或车窗开关坏、轮毂严重损坏、缺螺母、漏油、车身有锋利破损</li>
+    <li>车上有能录下考试的设备（行车记录仪等）</li>
+    <li>教练车的副刹不能用，或副油门没有拆掉、没有锁住</li>
+    <li>考试中发生碰撞，不论谁的责任</li>
+    <li>车坏在路上，或偏离路线太多、漏考了大量项目</li>
+    <li>行贿、情绪化恳求、威胁、反复要求考官忽略错误、辱骂或暴力</li>
+    <li>涉嫌酒驾或药驾；身体不适到不能安全驾驶；天气太差</li>
+    <li>Logbook 不完整或没按要求提交（25 岁以下）</li>
+  </ul>
+</section>
+
+<section id="speed">
+  <h2>限速 <span class="tag">km/h</span></h2>
+  <div class="callout">
+    <b>没看到限速牌时：按 50。</b>
+    <p>NSW 城区（built-up area）的默认限速是 50，通常不立牌。所以只要拐进一条新的街道、没看到牌子，就当它是 50。</p>
+  </div>
+  <div class="signs">
+    <div class="sp"><div class="disc">50</div><b>没牌子的城区街道</b><span class="aim">保持 45–48</span><span>住宅街、小路基本都是这个</span></div>
+    <div class="sp"><div class="disc school">40</div><b>学校区域 14:30–16:00</b><span class="aim">保持 35–38</span><span>看到学校牌子或闪灯就提前减速；你的考试后半段一定在这个时段</span></div>
+    <div class="sp"><div class="disc">60</div><b>立了牌的主干道</b><span class="aim">保持 55–58</span><span>Botany 附近的大路多数会立牌；以牌子为准</span></div>
+    <div class="sp"><div class="disc">40</div><b>经过闪灯的巴士；路限速 ≤80 时经过闪蓝 / 红灯的紧急车辆</b><span class="aim">降到 40 以下</span><span>官方 fail item 里专门点名</span></div>
+    <div class="sp"><div class="disc">90</div><b>学员上限</b><span class="aim">不超过 90</span><span>就算路牌写 100 也一样</span></div>
+  </div>
+  <ul class="rules">
+    <li><b>任何时候超速都算 fail</b>，包括学校区域、施工路段的临时限速。</li>
+    <li><b>也不能开太慢</b>：路况不需要却明显低于限速，算“不合理地妨碍交通”。建议比限速低 2–5 km/h。</li>
+    <li>下坡最容易超，提前松油、轻点刹车，多看一眼速度表。</li>
+    <li>港口附近大货车多：跟车至少 3 秒，停车时离前车 1–2 个车长，尽量不在大车的盲区里并行。</li>
+    <li>近年 Botany 一带部分主干道改过限速（例如港口路段施工），<b>一切以当天的牌子为准</b>。</li>
+  </ul>
+</section>
+
+<section id="mock">
+  <h2>模拟训练 <span class="tag">16 zones</span></h2>
+  <p class="note">按考试顺序走一遍。每题选一个做法，选完会告诉你对错和对应的官方 fail item。</p>
+  <div class="quiz" id="quiz" aria-live="polite"></div>
+</section>
+
+<section id="rightturn">
+  <h2>右转专项 <span class="tag">Right turn drills</span></h2>
+  <p class="note">第一次路考 95 分，只挂在“红绿灯路口右转，灯变红后还停在路口里，等考官提醒才转”。下面先看规则，再做 14 道右转情景题。</p>
+  <div class="callout">
+    <b>最重要的一条：已经进了路口等右转，灯变黄或变红时，确认对面车停住了就马上转走，别再让对面车。</b>
+    <p>红灯是给对面的，这时候该走的是你。还停在路口里等考官提醒，就是 fail item 6（Testing officer intervention）。</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>情况</th><th>英文</th><th>怎么做</th></tr></thead>
+    <tbody>
+      <tr><td>绿灯（圆灯），对面有直行车</td><td>Green light, oncoming traffic</td><td>开过停止线进入路口，车轮保持直的，等对面车流空档。能在对面车到达前至少 3 秒离开路口才转</td></tr>
+      <tr><td>在路口里等的时候灯变黄 / 红</td><td>Light changes while waiting in the intersection</td><td>确认对面车已停住（防闯红灯），马上完成转弯离开路口</td></tr>
+      <tr><td>还没过停止线灯就变黄</td><td>Yellow before the stop line</td><td>能安全停就停在线后，不能进路口</td></tr>
+      <tr><td>绿色右转箭头</td><td>Green arrow</td><td>可以转，对面车要停；照样看一眼有没有闯灯的车和行人</td></tr>
+      <tr><td>红色右转箭头（圆灯是绿的）</td><td>Red arrow</td><td>不能转，停在线后，就算对面没车也不行</td></tr>
+      <tr><td>箭头熄灭，只剩绿色圆灯</td><td>Arrow off, green circle only</td><td>可以转，但要让对面直行车和过马路的行人</td></tr>
+      <tr><td>行人正在过你要转进去的那条路</td><td>Pedestrians crossing the road you enter</td><td>让行人先过，停的时候不要停在人行横道上</td></tr>
+      <tr><td>多条右转车道</td><td>Multiple right-turn lanes</td><td>从哪条车道转，就出到对应的车道，转弯过程中不能换道</td></tr>
+      <tr><td>无标线道路右转（居民区）</td><td>Unmarked road</td><td>靠近中线左侧准备，打右灯，回头看右肩（防超车），车轮直，让对面车</td></tr>
+      <tr><td>转出 T 字路口（从断头路转出去）</td><td>Leaving the terminating road of a T-intersection</td><td>让主路两个方向的车，确认左右都安全再转</td></tr>
+      <tr><td>转进路口后的那条路堵着</td><td>No space in the road you're turning into</td><td>前面没空间就不要转进去，否则会把路口堵住（fail item 15）</td></tr>
+      <tr><td>单行道转出，或转进单行道</td><td>One-way street</td><td>靠右侧车道准备，转进去后靠右侧</td></tr>
+    </tbody>
+  </table></div>
+  <div class="quiz" id="rquiz" aria-live="polite"></div>
+</section>
+
+<section id="sheet">
+  <h2>模拟打分表 <span class="tag">Mock score sheet</span></h2>
+  <p class="note">让朋友坐副驾当考官，按官方 score sheet 的结构给你打分：25 个 zone，每个 zone 看 S P D C，有危险时再看 R。默认都算做到了，没做到就点一下画红圈。打完点「保存这次」，记录会留在下面的历史里，下次接着用。</p>
+  <div class="sheet">
+    <div class="sheet-block">
+      <div class="fields">
+        <label for="sh-date">日期<input type="date" id="sh-date"></label>
+        <label for="sh-examiner">模拟考官<input type="text" id="sh-examiner" placeholder="朋友的名字"></label>
+        <label for="sh-route">路线 / 地点<input type="text" id="sh-route" placeholder="例如 Botany 周边"></label>
+        <label for="sh-car">车辆<input type="text" id="sh-car" placeholder="自动挡 / 手动挡"></label>
+      </div>
+    </div>
+
+    <div class="sheet-block">
+      <div class="summary" id="sh-summary"></div>
+      <div class="verdict-bar" id="sh-verdict"></div>
+    </div>
+
+    <div class="sheet-block">
+      <h3>逐个 zone 打分 <small>Assessment by zone</small></h3>
+      <div class="legend">
+        <span><b>S</b> 速度管理 Speed</span><span><b>P</b> 道路位置 Position</span><span><b>D</b> 决策 Decision</span><span><b>C</b> 车辆控制 Control</span>
+        <span><b>H</b> 这个 zone 有危险 Hazard（点亮后才评 R）</span><span><b>R</b> 对危险的反应 Response</span>
+        <span><b>盲</b> 漏 head check（记 H 错误）</span><span><b>灯</b> 打灯错误（记 S 错误）</span>
+      </div>
+      <div class="zwrap"><table class="ztable" id="sh-zones">
+        <thead><tr><th>Z</th><th>S</th><th>P</th><th>D</th><th>C</th><th class="sep">H</th><th>R</th><th class="sep">盲</th><th>灯</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+
+    <div class="sheet-block">
+      <h3>Fail items <small>犯一个就不过</small></h3>
+      <div id="sh-fails"></div>
+      <label class="toggle-row" for="sh-immediate"><input type="checkbox" id="sh-immediate">Immediate fail：出现明显危险，考试当场中止</label>
+    </div>
+
+    <div class="sheet-block">
+      <h3>备注 <small>Notes</small></h3>
+      <textarea id="sh-notes" placeholder="例如：Zone 7 右转时离对面车太近；侧方停车方向变了 5 次"></textarea>
+      <div class="actions">
+        <span class="status" id="sh-status"></span>
+        <button class="btn ghost" id="sh-new">新的一次</button>
+        <button class="btn" id="sh-save">保存这次</button>
+      </div>
+    </div>
+
+    <div class="sheet-block">
+      <h3>历史记录 <small>History</small></h3>
+      <ul class="hist" id="sh-history"><li><div class="meta">正在加载记录…</div></li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="list">
+  <h2>出门清单</h2>
+  <ul class="check" id="checklist">
+    <li><label><input type="checkbox" id="c1">学员驾照（海外驾照另带身份文件和认可的翻译件）</label></li>
+    <li><label><input type="checkbox" id="c2">填好的驾照申请表（Licence Application）</label></li>
+    <li><label><input type="checkbox" id="c3">要戴的眼镜或隐形眼镜</label></li>
+    <li><label><input type="checkbox" id="c4">银行卡（通过后付 P1 驾照费；部分网点不收现金）</label></li>
+    <li><label><input type="checkbox" id="c5">25 岁以下：签好 Declaration 的 logbook（app 版要提前 48 小时提交）。25 岁及以上不需要</label></li>
+    <li><label><input type="checkbox" id="c6">注册有效、车况合格的车；行车记录仪已拆</label></li>
+    <li><label><input type="checkbox" id="c7">陪同的正式驾照持有人</label></li>
+    <li><label><input type="checkbox" id="c8">饭吃好、水喝够，提前 15 分钟以上到</label></li>
+  </ul>
+</section>
+
+<footer>依据 Transport for NSW《A Guide to the Driving Test》（2026-05）和 Transport for NSW 学校区域规则整理。限速以当天路牌为准。</footer>
+</div>
+
+<script>
+const Q = [
+ {z:"起步",en:"Moving off from the test bay",s:"你在考试车位里，考官说 “Drive out of the car park and turn left.” 车头朝外。",
+  o:["挂 D 直接开，停车场里不用打灯","打左转灯（indicate）至少 5 秒，看后视镜，再回头看盲区（head check），确认安全后起步","先打灯，看后视镜就走，停车场里不用 head check"],
+  a:1,e:"离开停车位或路边（leaving a parked position / the kerb）前必须打灯至少 5 秒，并 head check。漏看次数多了是 fail item。",i:"Fail item 12 / 19：Frequently not signalling / not performing observation checks"},
+ {z:"出口 Stop",en:"Stop sign & stop line",s:"出口有 Stop 牌和实线停止线（stop line）。你第一次停下时离线大约 2 米，左边被停着的车挡住视线（limited vision）。",
+  o:["已经停过了，慢慢开过去就行","再往前挪，停在线后 1 米以内、车身不压线；然后可以再慢慢往前探看，确认安全再走","停在原地等，直到完全看清再走"],
+  a:1,e:"最终停车位置必须在 stop line 1 米以内且不压线。停稳后可以为了看清路况再小心往前挪。",i:"Fail item 1：Disobeying traffic signs, signals or road markings"},
+ {z:"学校区域",en:"School zone",s:"14:33，你在一条限速 60 的路上，前方出现 School Zone 牌子，闪灯（flashing lights）在亮。",
+  o:["保持 60，闪灯只是提醒","在经过牌子之前降到 40 以下，保持 35–38","降到 45 左右，差不多就行"],
+  a:1,e:"School zone 8:00–9:30、14:30–16:00 在上学日生效，限速 40。超过 1 km/h 也是超速。",i:"Fail item 5：Exceeding the speed limit"},
+ {z:"住宅街",en:"Default speed limit (built-up area)",s:"考官说 “Turn right at the next street.” 路口和街上都没看到任何限速牌。",
+  o:["按 50 开，保持 45–48","没有牌子就按 60","为了保险开 30"],
+  a:0,e:"NSW built-up area 的 default speed limit 是 50。开得明显过慢、妨碍交通也会被判 fail。",i:"Fail item 5 / 15：Exceeding the speed limit / Unreasonably obstructing other vehicles"},
+ {z:"跟车",en:"Following distance (3-second gap)",s:"在主路上跟着一辆货车，你数到 “one thousand and two” 时已经过了货车刚经过的电线杆。",
+  o:["不用管，速度没超","松油慢慢拉开，直到至少 3 秒，路况差时 4 秒以上","变道超过它"],
+  a:1,e:"最小安全跟车距离（crash avoidance space）是 3 秒，下雨或夜间要更大。有车插进你的间隔，也要慢慢重新拉开。",i:"Fail item 18：Failing to maintain a safe following distance"},
+ {z:"黄灯",en:"Yellow (amber) traffic light",s:"前方绿灯变黄，你离 stop line 还有一段距离，后面没有车紧跟。",
+  o:["加速过去","平稳停在 stop line 后","继续保持速度通过"],
+  a:1,e:"能安全停下就必须停；只有急刹可能导致事故时才可以过。",i:"Fail item 1：Disobeying traffic signals"},
+ {z:"红灯起步",en:"Moving off at traffic lights",s:"你在红灯前第一个，灯变绿了。",
+  o:["立刻起步","转头看左右，确认没人闯红灯、没有行人，再起步","按喇叭提醒一下再走"],
+  a:1,e:"红绿灯和铁路道口（level crossing）起步前，必须转头确认安全。",i:"Fail item 19：Frequently not performing observation checks"},
+ {z:"右转",en:"Right turn at an intersection",s:"在有灯的路口右转，对面有车开过来，你进入路口等待。",
+  o:["方向盘提前打好，随时准备转","车轮保持直的；等到能在对面车到之前至少 3 秒离开路口再转，转之前 head check 右侧","对面车还很远就可以抢过去，不用管 3 秒"],
+  a:1,e:"等待时车轮朝前，被追尾也不会被推进对面车道。穿过车流（crossing the traffic flow）要留出 3 秒。",i:"Fail item 2 / 7：Failing to give way / Causing a dangerous situation"},
+ {z:"环岛",en:"Multi-lane roundabout",s:"两车道环岛，考官说 “At the roundabout, take the third exit.”（右转）",
+  o:["按路面箭头选车道，打右灯，让已经在环岛里的车；出口前打左灯，跨车道出去前 head check 左侧","走左车道，到出口直接出去","不打灯，进去再说"],
+  a:0,e:"按路面标线选车道并从允许的车道（permissible lane）出；进环岛让已在里面的车；能打就打左灯出；跨车道出时 head check。",i:"Fail item 2 / 4 / 12 / 19"},
+ {z:"变道",en:"Lane change",s:"前方左车道有车停着，你需要换到右车道。",
+  o:["打灯、看后视镜、head check，选一个不影响别人的空档（safe gap），再平稳过去","看后视镜就过去","不打灯，直接绕过去"],
+  a:0,e:"Safe gap 意味着别的车不需要改变速度或位置。变道前 head check。",i:"Fail item 2 / 12 / 19"},
+ {z:"紧急车辆",en:"Emergency vehicle",s:"后方传来警笛，一辆亮着灯的救护车在你车道后面。",
+  o:["保持车道和速度","在安全的前提下让出道路","急刹停车"],
+  a:1,e:"必须给紧急车辆让路，同时不要做出危险动作。",i:"Fail item 10：Failing to give way to an emergency vehicle"},
+ {z:"靠边停车",en:"Kerbside stop",s:"考官说 “Pull over and park behind that tree, and switch off the engine.”",
+  o:["打左灯、看后视镜、head check 左侧，平行靠边，离路缘 500mm 以内，轮子不开上路缘；停稳后关转向灯、拉手刹、挂 P，熄火，手脚离开控制","靠边停下，离路缘 1 米左右也行，手刹拉上就好","停好后挂 P，不熄火，等考官下一步指令"],
+  a:0,e:"Kerbside stop 要像准备下车一样把车 secure 好：手刹、P 挡、熄火。离路缘要在 500mm 以内、车身平行；轮胎碰到路缘侧面不算 fail，开上路缘才算。",i:"Fail item 3 / 17：Colliding (mounting the kerb) / Not parking to the required standard"},
+ {z:"坡起",en:"Hill start (restart after kerbside stop)",s:"你在上坡路边，车已熄火。考官说 “Start the car and move off when you're ready.”",
+  o:["启动后松手刹，车往后溜一点再给油","手刹拉着、踩刹车启动，看仪表盘；打右灯至少 5 秒、看后视镜、head check 右侧；给油到车有前冲感再放手刹，不溜车","启动后不打灯直接走"],
+  a:1,e:"起步溜车（roll back）超过 500mm 是 fail；离开路边要打灯至少 5 秒并 head check。",i:"Fail item 8 / 12 / 19：Failing to maintain proper control / signalling / observation"},
+ {z:"三点掉头",en:"3-point turn",s:"考官说 “When you're ready, turn the car around to face the opposite direction.”",
+  o:["每次换方向前都看左右，倒车时转身看后窗；尽量 3 次完成，最多 5 次","一把打到底，倒几次都没关系","只看后视镜，不回头"],
+  a:0,e:"能 3 次完成就要 3 次，上限 5 次（direction changes）；每次移动前检查左右来车。",i:"Fail item 19：Frequently not performing observation checks"},
+ {z:"侧方停车",en:"Reverse parallel park",s:"考官说 “Reverse park behind the white car.” 车上有倒车影像（reversing camera）。",
+  o:["只看倒车影像就行","关掉 park assist；可以用影像，但同时看后视镜并转身看后窗；车头甩出去时 head check；离路缘 500mm 以内、离前后车 1–2 米；方向变化不超过 4 次；不要倒到前车后面 7 米以外","离前车近一点，0.5 米也行"],
+  a:1,e:"倒过头 7 米、最终离路缘超过 1 米、压停车线都是 fail。",i:"Fail item 17：Not parking to the required standard"},
+ {z:"返回",en:"End of test",s:"你开回 service centre，停进考试车位。",
+  o:["停好后马上下车","拉手刹、挂 P，熄火，等考官说结束再下车；回大厅等结果","停在车位外面就行"],
+  a:1,e:"最后停好才熄火。挂了的话不能自己开车离开，要让陪同的人开。",i:"流程（procedure）"}
+];
+let idx=0, picks=[];
+const box=document.getElementById("quiz");
+function zonesBar(){return '<div class="zones" aria-hidden="true">'+Q.map((q,i)=>{let c="";if(i<picks.length)c=picks[i]===Q[i].a?"ok":"bad";else if(i===idx)c="cur";return '<i class="'+c+'"></i>';}).join("")+'</div>';}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function render(){
+  if(idx>=Q.length){return renderResult();}
+  const q=Q[idx], answered=picks.length>idx;
+  let h='<div class="qhead"><span>ZONE '+(idx+1)+' / '+Q.length+'</span><span>'+score()+' 正确</span></div>'+zonesBar();
+  h+='<div class="qbody"><p class="scene"><span class="z">'+esc(q.z)+' · '+esc(q.en)+'</span>'+esc(q.s)+'</p><div class="opts">';
+  q.o.forEach((t,i)=>{let cls="opt";if(answered){if(i===q.a)cls+=" right";else if(i===picks[idx])cls+=" wrongpick";}
+    h+='<button class="'+cls+'" id="opt'+i+'" data-i="'+i+'"'+(answered?" disabled":"")+'>'+String.fromCharCode(65+i)+'. '+esc(t)+'</button>';});
+  h+='</div>';
+  if(answered){const ok=picks[idx]===q.a;h+='<div class="explain'+(ok?"":" bad")+'"><span class="verdict">'+(ok?"✓ 正确":"✗ 正确答案是 "+String.fromCharCode(65+q.a))+'</span><span>'+esc(q.e)+'</span><span class="item">'+esc(q.i)+'</span></div>';}
+  h+='</div>';
+  if(answered)h+='<div class="qfoot"><button class="btn" id="next">'+(idx===Q.length-1?"看结果":"下一个 zone →")+'</button></div>';
+  box.innerHTML=h;
+  box.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{picks[idx]=+b.dataset.i;render();}));
+  const n=document.getElementById("next");if(n){n.addEventListener("click",()=>{idx++;render();});n.focus({preventScroll:true});}
+}
+function score(){return picks.filter((p,i)=>p===Q[i].a).length;}
+function renderResult(){
+  const s=score(), wrong=Q.map((q,i)=>i).filter(i=>picks[i]!==Q[i].a);
+  let h='<div class="qhead"><span>结果</span><span>'+Q.length+' ZONES</span></div>'+zonesBar()+'<div class="qbody result"><div class="score">'+s+' / '+Q.length+'</div>';
+  h+= wrong.length? '<p>下面这些再看一遍：</p><ol class="review">'+wrong.map(i=>'<li><b>'+esc(Q[i].z)+' · '+esc(Q[i].en)+'</b>：'+esc(Q[i].e)+'</li>').join("")+'</ol>' : '<p>全对。考试当天照这样开就行。</p>';
+  h+='</div><div class="qfoot"><button class="btn ghost" id="again">再练一遍</button></div>';
+  box.innerHTML=h;
+  document.getElementById("again").addEventListener("click",()=>{idx=0;picks=[];render();});
+}
+render();
+</script>
+<script>
+(function(){
+const FAILS=[
+ ["Disobeying signs, signals or markings","闯红灯、黄灯能停不停、Stop 线停错、压实线"],
+ ["Failing to give way","不让车、不让行人"],
+ ["Colliding / mounting the kerb","碰撞、开上路缘或环岛"],
+ ["Illegal act or manoeuvre","走错车道、违规掉头、没系安全带、用手机"],
+ ["Exceeding the speed limit","任何时候超速，含学校区域"],
+ ["Testing officer intervention","考官口头提醒或动手帮忙"],
+ ["Causing a dangerous situation","不安全超车、不必要的让行"],
+ ["Failing to maintain control","溜车超过 500mm、打滑、空挡滑行"],
+ ["Failing to exercise due care","该反应时没准备好"],
+ ["Not giving way to emergency vehicle","不给紧急车辆让路"],
+ ["Disobeying a traffic controller","不听警察或施工人员指挥"],
+ ["Frequently not signalling","反复不打灯"],
+ ["Refusing part of the test","拒绝做某个项目"],
+ ["Not following directions","反复或故意不按指令走"],
+ ["Unreasonably obstructing","堵路口、开得明显太慢"],
+ ["Receiving external advice","有人在旁边提示"],
+ ["Not parking to standard","离路缘超 1 米、压线、倒过 7 米"],
+ ["Unsafe following distance","跟车不足 3 秒"],
+ ["Frequently missing observation checks","反复漏 head check"]
+];
+const ZN=25, KEYS=["s","p","d","c"];
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+function blank(){return {date:today(),examiner:"",route:"",car:"",zones:Array.from({length:ZN},()=>({s:0,p:0,d:0,c:0,h:0,r:0,obs:0,sig:0})),fails:Array(19).fill(0),immediate:false,notes:""};}
+let st=blank(), editingId=null, db=null, records=[], pendingDelete=null;
+const DRAFT="botany-sheet-draft";
+function saveDraft(){try{localStorage.setItem(DRAFT,JSON.stringify({st,editingId}));}catch(e){}}
+try{const d=JSON.parse(localStorage.getItem(DRAFT)||"null");if(d&&d.st&&Array.isArray(d.st.zones)&&d.st.zones.length===ZN){st=d.st;editingId=d.editingId||null;}}catch(e){}
+
+function calc(s){
+  let assessed=0,missed=0,obs=0,sig=0;
+  s.zones.forEach(z=>{KEYS.forEach(k=>{assessed++;if(z[k])missed++;});if(z.h){assessed++;if(z.r)missed++;}obs+=z.obs;sig+=z.sig;});
+  const pct=assessed?Math.round((assessed-missed)/assessed*1000)/10:0;
+  const failCount=s.fails.reduce((a,b)=>a+b,0);
+  const reasons=[];
+  if(assessed&&(assessed-missed)/assessed<0.9)reasons.push("分数低于 90%（最多可扣 "+Math.floor(assessed*0.1)+" 项）");
+  if(failCount>0)reasons.push(failCount+" 个 fail item");
+  if(s.immediate)reasons.push("Immediate fail");
+  return {pct,missed,assessed,obs,sig,failCount,pass:reasons.length===0,reasons};
+}
+function fmtPct(p){return (p%1===0?p.toFixed(0):p.toFixed(1))+"%";}
+
+function buildZones(){
+  const tb=$("sh-zones").tBodies[0];let h="";
+  for(let i=0;i<ZN;i++){
+    h+='<tr><td class="zn">'+(i+1)+'</td>';
+    KEYS.forEach(k=>{h+='<td><button class="chip" data-z="'+i+'" data-k="'+k+'" id="z'+i+k+'" aria-label="Zone '+(i+1)+' '+k.toUpperCase()+'">'+k.toUpperCase()+'</button></td>';});
+    h+='<td class="sep"><button class="chip" data-z="'+i+'" data-k="h" id="z'+i+'h" aria-label="Zone '+(i+1)+' 有危险">H</button></td>';
+    h+='<td><button class="chip" data-z="'+i+'" data-k="r" id="z'+i+'r" aria-label="Zone '+(i+1)+' R">R</button></td>';
+    h+='<td class="sep"><button class="chip" data-z="'+i+'" data-k="obs" id="z'+i+'obs" aria-label="Zone '+(i+1)+' 漏 head check">盲</button></td>';
+    h+='<td><button class="chip" data-z="'+i+'" data-k="sig" id="z'+i+'sig" aria-label="Zone '+(i+1)+' 打灯错误">灯</button></td></tr>';
+  }
+  tb.innerHTML=h;
+  tb.addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b||b.disabled)return;const z=st.zones[+b.dataset.z],k=b.dataset.k;z[k]=z[k]?0:1;if(k==="h"&&!z.h)z.r=0;changed();});
+}
+function buildFails(){
+  let h="";FAILS.forEach((f,i)=>{h+='<div class="frow" id="fr'+i+'"><span class="n">'+(i+1)+'</span><span class="t">'+f[0]+'<small>'+f[1]+'</small></span><span class="stepper"><button data-f="'+i+'" data-d="-1" aria-label="减少 fail item '+(i+1)+'">−</button><output id="fo'+i+'">0</output><button data-f="'+i+'" data-d="1" aria-label="增加 fail item '+(i+1)+'">+</button></span></div>';});
+  $("sh-fails").innerHTML=h;
+  $("sh-fails").addEventListener("click",e=>{const b=e.target.closest("button[data-f]");if(!b)return;const i=+b.dataset.f;st.fails[i]=Math.max(0,st.fails[i]+(+b.dataset.d));changed();});
+}
+function paint(){
+  $("sh-date").value=st.date;$("sh-examiner").value=st.examiner;$("sh-route").value=st.route;$("sh-car").value=st.car;$("sh-notes").value=st.notes;$("sh-immediate").checked=st.immediate;
+  st.zones.forEach((z,i)=>{
+    KEYS.forEach(k=>{const b=$("z"+i+k);b.className="chip"+(z[k]?" miss":"");b.setAttribute("aria-pressed",z[k]?"true":"false");});
+    const hb=$("z"+i+"h");hb.className="chip"+(z.h?" haz":"");hb.setAttribute("aria-pressed",z.h?"true":"false");
+    const rb=$("z"+i+"r");rb.disabled=!z.h;rb.className="chip"+(z.r?" miss":"");
+    ["obs","sig"].forEach(k=>{const b=$("z"+i+k);b.className="chip"+(z[k]?" flag":"");b.setAttribute("aria-pressed",z[k]?"true":"false");});
+  });
+  st.fails.forEach((n,i)=>{$("fo"+i).textContent=n;$("fr"+i).classList.toggle("hit",n>0);});
+  const r=calc(st);
+  $("sh-summary").innerHTML='<div><b>'+fmtPct(r.pct)+'</b><span>模拟分数（扣了 '+r.missed+' / 最多 '+Math.floor(r.assessed*0.1)+'）</span></div><div><b>'+r.failCount+'</b><span>Fail items</span></div><div><b>'+r.obs+'</b><span>漏 head check 次数</span></div><div><b>'+r.sig+'</b><span>打灯错误次数</span></div>';
+  let warn=[];if(r.obs>=3)warn.push("漏看已 "+r.obs+" 次，真考可能被判 fail item 19");if(r.sig>=3)warn.push("打灯错误已 "+r.sig+" 次，真考可能被判 fail item 12");
+  $("sh-verdict").innerHTML='<span class="vpill '+(r.pass?"pass":"fail")+'">'+(r.pass?"PASS":"FAIL")+'</span><span>'+(r.pass?"分数达标，没有 fail item":r.reasons.join("、"))+'</span>'+(warn.length?'<span style="flex-basis:100%;color:var(--wrong)">'+warn.join("；")+'</span>':"");
+  $("sh-save").textContent=editingId?"更新这条记录":"保存这次";
+}
+function changed(){paint();saveDraft();}
+["date","examiner","route","car","notes"].forEach(k=>{$("sh-"+k).addEventListener("input",e=>{st[k]=e.target.value;saveDraft();});});
+$("sh-immediate").addEventListener("change",e=>{st.immediate=e.target.checked;changed();});
+function status(t){$("sh-status").textContent=t;}
+
+let confirmNew=false;
+$("sh-new").addEventListener("click",()=>{
+  const dirty=JSON.stringify(st.zones)!==JSON.stringify(blank().zones)||st.fails.some(n=>n>0)||st.notes;
+  if(dirty&&!confirmNew&&!editingId){confirmNew=true;$("sh-new").textContent="确定清空？";status("当前这次还没保存");setTimeout(()=>{confirmNew=false;$("sh-new").textContent="新的一次";},4000);return;}
+  confirmNew=false;$("sh-new").textContent="新的一次";st=blank();editingId=null;changed();status("已开始新的一次");
+  $("sheet").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+$("sh-save").addEventListener("click",async()=>{
+  if(!db){status("这个页面现在不能保存记录：请登录 claude.ai，用自己的账号打开");return;}
+  const r=calc(st);
+  const body={date:st.date,examiner:st.examiner.slice(0,60),route:st.route.slice(0,80),car:st.car.slice(0,40),notes:st.notes.slice(0,2000),zones:st.zones,fails:st.fails,immediate:st.immediate,score:r.pct,pass:r.pass,failCount:r.failCount,obs:r.obs,sig:r.sig,savedAt:new Date().toISOString()};
+  $("sh-save").disabled=true;status("正在保存…");
+  try{
+    if(editingId){await db.collection("attempts").doc(editingId).set(body);status("已更新");}
+    else{const ref=await db.collection("attempts").add(body);editingId=ref.id;status("已保存");}
+    saveDraft();paint();
+  }catch(e){
+    status(e&&e.code==="invalid_argument"?"保存失败：这个账号只能查看，不能写入记录":e&&e.code==="quota_exceeded"?"保存失败：记录太多了，删掉几条旧的再试":"保存失败，请稍后再试");
+  }finally{$("sh-save").disabled=false;}
+});
+
+function renderHistory(){
+  const ul=$("sh-history");
+  if(!db){ul.innerHTML='<li><div class="meta">登录 claude.ai 后打开本页，打分记录才能保存和查看。现在仍然可以打分，只是不会存下来。</div></li>';return;}
+  if(!records.length){ul.innerHTML='<li><div class="meta">还没有记录。打完一次点「保存这次」，就会出现在这里。</div></li>';return;}
+  ul.innerHTML=records.map(r=>{const d=r.data;const esc2=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+    return '<li><div class="meta"><span class="vpill '+(d.pass?"pass":"fail")+'" style="font-size:.8rem;padding:1px 8px">'+(d.pass?"PASS":"FAIL")+'</span> <b>'+fmtPct(+d.score||0)+'</b> · '+(d.failCount||0)+' fail<small>'+esc2(d.date)+(d.examiner?" · "+esc2(d.examiner):"")+(d.route?" · "+esc2(d.route):"")+' · 漏看 '+(d.obs||0)+' · 打灯 '+(d.sig||0)+'</small></div><div class="btns"><button class="btn ghost sm" data-open="'+r.id+'">打开</button><button class="btn '+(pendingDelete===r.id?"danger":"ghost")+' sm" data-del="'+r.id+'">'+(pendingDelete===r.id?"确认删除":"删除")+'</button></div></li>';}).join("");
+}
+$("sh-history").addEventListener("click",async e=>{
+  const o=e.target.closest("[data-open]"),d=e.target.closest("[data-del]");
+  if(o){const rec=records.find(r=>r.id===o.dataset.open);if(!rec)return;const x=rec.data;
+    st={date:x.date||today(),examiner:x.examiner||"",route:x.route||"",car:x.car||"",notes:x.notes||"",immediate:!!x.immediate,
+      zones:(Array.isArray(x.zones)&&x.zones.length===ZN)?x.zones.map(z=>({s:z.s?1:0,p:z.p?1:0,d:z.d?1:0,c:z.c?1:0,h:z.h?1:0,r:z.r?1:0,obs:z.obs?1:0,sig:z.sig?1:0})):blank().zones,
+      fails:(Array.isArray(x.fails)&&x.fails.length===19)?x.fails.map(n=>Math.max(0,+n||0)):Array(19).fill(0)};
+    editingId=rec.id;changed();status("已打开 "+(x.date||"")+" 的记录，改完点「更新这条记录」");$("sheet").scrollIntoView({behavior:"smooth",block:"start"});}
+  if(d){const id=d.dataset.del;
+    if(pendingDelete!==id){pendingDelete=id;renderHistory();setTimeout(()=>{if(pendingDelete===id){pendingDelete=null;renderHistory();}},4000);return;}
+    pendingDelete=null;try{await db.collection("attempts").doc(id).delete();if(editingId===id){editingId=null;paint();saveDraft();}status("已删除");}catch(err){status("删除失败，请稍后再试");}}
+});
+
+buildZones();buildFails();paint();renderHistory();
+(async()=>{
+  try{db=window.claude&&window.claude.use?await window.claude.use("db"):null;}catch(e){db=null;}
+  if(!db){renderHistory();return;}
+  db.collection("attempts").orderBy("savedAt","desc").limit(200).onSnapshot(snap=>{records=snap.docs.map(d=>({id:d.id,data:d.data()||{}}));renderHistory();},()=>{db=null;renderHistory();});
+})();
+})();
+</script>
+<script>
+(function(){
+const RQ=[
+ {z:"灯变红还在路口里",en:"Light turns red while waiting in the intersection",s:"绿灯时你已开过停止线，在路口中间等右转。对面车一直没断，灯变黄，接着变红。对面车道的车已经停在它们的停止线前。",
+  o:["继续等，等对面完全没车、考官说可以再转","确认对面车都停住了，马上完成右转离开路口","倒回停止线后面，等下一个绿灯"],
+  a:1,e:"已经进了路口的车，灯变黄或变红后要尽快离开路口。红灯是给对面的，这时候该你走。停着不动要等考官提醒，就是这次挂科的原因。倒车更危险。",i:"Fail item 6：Action requiring testing officer intervention"},
+ {z:"对面有车闯红灯",en:"Oncoming car runs the red light",s:"你在路口里等右转，灯已经变红。你正准备转，看到对面最里侧车道有一辆车没减速，看样子要冲过来。",
+  o:["先停着让它过去，确认对面都停住了再转走","按喇叭然后马上转","红灯了它应该会停，直接转"],
+  a:0,e:"规则是尽快离开路口，但安全永远第一。确认对面每条车道的车都停住，再果断转走。",i:"Fail item 9：Failing to exercise due care to avoid an accident"},
+ {z:"还没到停止线就变黄",en:"Yellow light before the stop line",s:"你离停止线还有两三个车长，准备右转，灯变黄。后面的车离你不近。",
+  o:["加速开进路口，进去了再说","平稳停在停止线后","开到路口中间停下等"],
+  a:1,e:"还没过停止线，能安全停就必须停。只有已经在路口里的车才是“尽快离开”。",i:"Fail item 1：Disobeying traffic signals"},
+ {z:"绿灯圆灯",en:"Green circle, oncoming traffic",s:"绿灯（没有箭头），你要右转，对面有直行车陆续过来。",
+  o:["停在停止线后等，对面没车了再进路口","开过停止线进入路口，车轮保持直的，等一个安全空档再转","趁对面车还有点距离，赶紧抢过去"],
+  a:1,e:"绿灯时可以进入路口等。车轮保持直的，被追尾也不会被推进对面车道。空档要能让你在对面车到达前至少 3 秒离开路口。一直停在线后不进去，可能被判犹豫或妨碍交通。",i:"Fail item 2 / 15：Failing to give way / Unreasonably obstructing"},
+ {z:"车轮朝向",en:"Wheels straight while waiting",s:"你在路口中间等右转，对面车很多，可能要等一会儿。",
+  o:["方向盘先往右打好，空档一出现就能马上走","车轮保持直的，空档出现再打方向","挂空挡、松刹车休息一下"],
+  a:1,e:"提前打方向的话，被后车追尾会被推进对面车流。挂空挡松刹车也不对，要保持对车辆的控制。",i:"官方指南：Keep your steering straight while waiting to turn right"},
+ {z:"绿色箭头",en:"Green right-turn arrow",s:"右转车道的绿色箭头亮了，对面直行是红灯。",
+  o:["等对面车道完全空了才转","可以转，同时看一眼有没有闯灯的车和横穿的行人","箭头只是提示，照样要让对面直行车"],
+  a:1,e:"绿色箭头表示你有通行权，对面要停。但还是要看一眼，防闯红灯的车和违规过马路的人。",i:"Fail item 9：Due care"},
+ {z:"红色箭头",en:"Red right-turn arrow",s:"右转车道上方是红色箭头，旁边直行的圆灯是绿的，对面一辆车都没有。",
+  o:["对面没车，可以转","停在停止线后，等箭头变绿或熄灭","开进路口中间等"],
+  a:1,e:"红色箭头就是右转的红灯，不管对面有没有车都不能转，也不能过停止线。",i:"Fail item 1：Disobeying traffic signals"},
+ {z:"箭头熄灭",en:"Arrow goes off, green circle remains",s:"刚才的绿色右转箭头熄灭了，现在只剩绿色圆灯，对面直行车开始动了。",
+  o:["箭头没了就不能转了，停下等","可以进路口转，但现在要让对面直行车","箭头刚灭，还可以照常抢着转"],
+  a:1,e:"箭头熄灭、只剩绿色圆灯时，可以右转，但要像普通绿灯一样让对面直行车和行人。",i:"Fail item 2：Failing to give way"},
+ {z:"行人",en:"Pedestrians crossing the road you enter",s:"绿灯，对面没车了，你开始右转，看到你要转进去的那条路上，有行人正在走人行横道（行人是绿灯）。",
+  o:["加速在行人前面转过去","停下让行人先过；停车时车头不压人行横道","按喇叭提醒行人"],
+  a:1,e:"转弯时必须让正在过你要进入那条路的行人。最好在开始转之前就先看那条路的人行横道：有人在走或马上要走，就在路口等候位置车轮保持直的等，人走完、对面也有空档再转。已经开始转了才看到有人，也必须停下让，但要停在人行横道之前。",i:"Fail item 2 / 4：Failing to give way / Stopping on a crossing"},
+ {z:"双右转车道",en:"Two right-turn lanes",s:"路口有两条右转车道，你在左边那条（靠里侧的右转车道）。",
+  o:["转弯时可以换到任意车道","转完后进入对应的车道（左边那条），转弯过程中不换道","转完后直接进最右边的车道，方便下一个右转"],
+  a:1,e:"多条转弯车道时，要出到对应的、允许的车道。转弯中跨道是 fail item。",i:"Fail item 4：Not exiting to a permissible lane"},
+ {z:"居民区无标线",en:"Right turn on an unmarked residential road",s:"一条没有车道线的居民区街道，你要右转进一条小街，对面有一辆车开过来，后面有一辆摩托。",
+  o:["靠近道路中间偏左的位置准备，打右灯、回头看右肩，车轮直，让对面车过了再转","靠路边左侧慢慢转过去","不用打灯，小街没人"],
+  a:0,e:"无标线道路右转，要靠近道路中间的左侧准备；回头看右肩，防有车或摩托正在超你；让对面车。",i:"Fail item 4 / 12 / 19"},
+ {z:"T 字路口转出",en:"Turning right out of a T-intersection",s:"你从 T 字路口的断头路要右转到主路上，路口是 Give Way，左右两边都有车。",
+  o:["只看右边来车就行","左右两个方向都要让，看右-左-右，确认两边都有安全空档再转","主路车会让你"],
+  a:1,e:"从 T 字路口的断头路出来，要让主路上两个方向的车。右转要穿过近处车道、汇入远处车道，两边都要确认安全。",i:"Fail item 2：Failing to give way"},
+ {z:"转进去的路堵了",en:"No space in the road you're turning into",s:"绿灯，对面没车，但你要转进去的那条路车排得很长，转进去后车尾会停在路口里。",
+  o:["先转进去，堵在路口也没关系","在停止线后或路口等候位置等，前面有空间再转","换一条路直行"],
+  a:1,e:"路口对面没有空间还开进去，堵在路口里，是 fail item 15。等前面空出来再转。",i:"Fail item 15：Unreasonably obstructing"},
+ {z:"对面车打左灯",en:"Oncoming car indicating left",s:"你在路口里等右转，对面一辆车打着左转灯开过来。",
+  o:["它要左转，不会挡我，直接转","等它真的开始左转、确定不会直行再转","闪大灯让它先走"],
+  a:1,e:"转向灯不代表一定会转。等对方的动作明确了再走，不然可能撞上。",i:"Fail item 9：Failing to exercise due care"}
+];
+const box=document.getElementById("rquiz");
+let idx=0,picks=[];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const score=()=>picks.filter((p,i)=>p===RQ[i].a).length;
+function bar(){return '<div class="zones" aria-hidden="true">'+RQ.map((q,i)=>{let c="";if(i<picks.length)c=picks[i]===RQ[i].a?"ok":"bad";else if(i===idx)c="cur";return '<i class="'+c+'"></i>';}).join("")+'</div>';}
+function render(){
+  if(idx>=RQ.length)return result();
+  const q=RQ[idx],ans=picks.length>idx;
+  let h='<div class="qhead"><span>RIGHT TURN '+(idx+1)+' / '+RQ.length+'</span><span>'+score()+' 正确</span></div>'+bar();
+  h+='<div class="qbody"><p class="scene"><span class="z">'+esc(q.z)+' · '+esc(q.en)+'</span>'+esc(q.s)+'</p><div class="opts">';
+  q.o.forEach((t,i)=>{let c="opt";if(ans){if(i===q.a)c+=" right";else if(i===picks[idx])c+=" wrongpick";}h+='<button class="'+c+'" id="ropt'+i+'" data-i="'+i+'"'+(ans?" disabled":"")+'>'+String.fromCharCode(65+i)+'. '+esc(t)+'</button>';});
+  h+='</div>';
+  if(ans){const ok=picks[idx]===q.a;h+='<div class="explain'+(ok?"":" bad")+'"><span class="verdict">'+(ok?"✓ 正确":"✗ 正确答案是 "+String.fromCharCode(65+q.a))+'</span><span>'+esc(q.e)+'</span><span class="item">'+esc(q.i)+'</span></div>';}
+  h+='</div>';
+  if(ans)h+='<div class="qfoot"><button class="btn" id="rnext">'+(idx===RQ.length-1?"看结果":"下一题 →")+'</button></div>';
+  box.innerHTML=h;
+  box.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{picks[idx]=+b.dataset.i;render();}));
+  const n=document.getElementById("rnext");if(n){n.addEventListener("click",()=>{idx++;render();});n.focus({preventScroll:true});}
+}
+function result(){
+  const s=score(),wrong=RQ.map((q,i)=>i).filter(i=>picks[i]!==RQ[i].a);
+  let h='<div class="qhead"><span>结果</span><span>'+RQ.length+' 题</span></div>'+bar()+'<div class="qbody result"><div class="score">'+s+' / '+RQ.length+'</div>';
+  h+=wrong.length?'<p>这些再看一遍：</p><ol class="review">'+wrong.map(i=>'<li><b>'+esc(RQ[i].z)+' · '+esc(RQ[i].en)+'</b>：'+esc(RQ[i].e)+'</li>').join("")+'</ol>':'<p>全对。练车时每次右转都按这个思路过一遍。</p>';
+  h+='</div><div class="qfoot"><button class="btn ghost" id="ragain">再练一遍</button></div>';
+  box.innerHTML=h;document.getElementById("ragain").addEventListener("click",()=>{idx=0;picks=[];render();});
+}
+render();
+})();
+</script>
